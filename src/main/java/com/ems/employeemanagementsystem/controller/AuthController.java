@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+	@PostMapping("/login")
+	public LoginResponse login(@RequestBody LoginRequest request) {
 
-        String token =
-                JwtUtil.generateToken(request.getUsername());
+	    String token =
+	            JwtUtil.generateToken(
+	                    request.getUsername(),
+	                    "ROLE_ADMIN"
+	            );
 
-        return new LoginResponse(token);
-    }
+	    return new LoginResponse(token);
+	}
 }

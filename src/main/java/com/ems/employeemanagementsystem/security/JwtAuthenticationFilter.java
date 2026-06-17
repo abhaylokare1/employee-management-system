@@ -1,5 +1,9 @@
 package com.ems.employeemanagementsystem.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,11 +15,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final SecretKey SECRET_KEY =
+            Keys.hmacShaKeyFor(
+                    "mysecretkeymysecretkeymysecretkey12345"
+                            .getBytes(StandardCharsets.UTF_8));
 
     @Override
     protected void doFilterInternal(
@@ -24,30 +35,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        String authHeader =
+                request.getHeader("Authorization");
 
         if (authHeader != null &&
                 authHeader.startsWith("Bearer ")) {
 
-            String token = authHeader.substring(7);
+            String token =
+                    authHeader.substring(7);
 
-            if (JwtUtil.validateToken(token)) {
+            try {
+
+                Claims claims =
+                        Jwts.parser()
+                                .verifyWith(SECRET_KEY)
+                                .build()
+                                .parseSignedClaims(token)
+                                .getPayload();
 
                 String username =
-                        JwtUtil.extractUsername(token);
+                        claims.getSubject();
 
-                UsernamePasswordAuthenticationToken authentication =
+                String role =
+                        claims.get("role", String.class);
+
+                UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 username,
                                 null,
                                 List.of(
-                                        new SimpleGrantedAuthority("ROLE_USER")
+                                        new SimpleGrantedAuthority(role)
                                 )
                         );
 
                 SecurityContextHolder
                         .getContext()
-                        .setAuthentication(authentication);
+                        .setAuthentication(auth);
+
+            } catch (Exception e) {
+
+                System.out.println("Invalid JWT");
+
             }
         }
 

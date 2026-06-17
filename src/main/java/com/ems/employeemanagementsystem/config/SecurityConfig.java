@@ -25,7 +25,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(
+                                "/employees/**"
+                        ).hasRole("ADMIN")
+
+                        .anyRequest()
+                        .authenticated()
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

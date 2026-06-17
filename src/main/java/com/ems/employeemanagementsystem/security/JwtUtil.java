@@ -15,16 +15,16 @@ public class JwtUtil {
                     "mysecretkeymysecretkeymysecretkey12345"
                             .getBytes(StandardCharsets.UTF_8));
 
-    public static String generateToken(String username) {
+    public static String generateToken(String username, String role) {
 
         return Jwts.builder()
                 .subject(username)
+                .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(
-                        new Date(System.currentTimeMillis() + 86400000)
-                )
+                .expiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(SECRET_KEY)
                 .compact();
+
     }
 
     public static String extractUsername(String token) {
