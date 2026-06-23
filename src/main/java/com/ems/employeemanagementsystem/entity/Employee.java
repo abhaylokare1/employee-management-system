@@ -1,7 +1,8 @@
 package com.ems.employeemanagementsystem.entity;
 
 import java.time.LocalDateTime;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -58,6 +59,14 @@ public class Employee {
 		this.createdAt = createdAt;
 	}
 
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	@Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -67,8 +76,11 @@ public class Employee {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {

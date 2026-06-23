@@ -6,123 +6,146 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ems.employeemanagementsystem.dto.EmployeeDto;
 import com.ems.employeemanagementsystem.service.EmployeeService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@Tag(name = "Employee Management APIs",
-        description = "CRUD Operations for Employee Management System")
+@RequestMapping("/employees")
+@Tag(
+        name = "Employee Management APIs",
+        description = "CRUD Operations for Employee Management System"
+)
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
+    // CREATE EMPLOYEE
     @Operation(
             summary = "Create Employee",
             description = "Create a new employee and save into database"
     )
-    @PostMapping("/employees")
+    @PostMapping
     public ResponseEntity<EmployeeDto> saveEmployee(
             @Valid @RequestBody EmployeeDto employeeDto) {
-        {
 
-            EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDto);
+        EmployeeDto savedEmployee =
+                employeeService.saveEmployee(employeeDto);
 
-            return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
-
-        }
+        return new ResponseEntity<>(
+                savedEmployee,
+                HttpStatus.CREATED
+        );
     }
 
-    // GET ALL EMPLOYEES
-    @GetMapping("/employees")
+    // GET ALL EMPLOYEES WITH PAGINATION AND SORTING
+    @GetMapping
     public ResponseEntity<Page<EmployeeDto>> getAllEmployees(
 
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
-        return ResponseEntity.ok(employeeService.getAllEmployees(page, size));
-
+        return ResponseEntity.ok(
+                employeeService.getAllEmployees(
+                        page,
+                        size,
+                        sortBy,
+                        sortDir
+                )
+        );
     }
 
     // GET EMPLOYEE BY ID
-    @GetMapping("/employees/{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> getEmployeeById(
+            @PathVariable Long id) {
 
-        return ResponseEntity.ok(employeeService.getEmployeeById(id));
-
+        return ResponseEntity.ok(
+                employeeService.getEmployeeById(id)
+        );
     }
 
     // UPDATE EMPLOYEE
-    @PutMapping("/employees/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<EmployeeDto> updateEmployee(
             @PathVariable Long id,
             @Valid @RequestBody EmployeeDto employeeDto) {
 
-        return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDto));
-
+        return ResponseEntity.ok(
+                employeeService.updateEmployee(
+                        id,
+                        employeeDto
+                )
+        );
     }
 
     // DELETE EMPLOYEE
-    @DeleteMapping("/employees/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEmployee(
+            @PathVariable Long id) {
 
         employeeService.deleteEmployee(id);
 
-        return ResponseEntity.ok("Employee deleted successfully");
-
+        return ResponseEntity.ok(
+                "Employee deleted successfully"
+        );
     }
-    @GetMapping("/employees/search")
-    public ResponseEntity<List<EmployeeDto>> searchEmployees(
 
+    // SEARCH EMPLOYEES
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeDto>> searchEmployees(
             @RequestParam String keyword) {
 
         return ResponseEntity.ok(
-                employeeService.searchEmployees(keyword));
-
+                employeeService.searchEmployees(keyword)
+        );
     }
-    @GetMapping("/employees/sort")
-    public ResponseEntity<List<EmployeeDto>> sortEmployees(
 
-            @RequestParam String field) {
-
-        return ResponseEntity.ok(
-                employeeService.sortEmployees(field));
-
-    }
-    @GetMapping("/employees/firstname")
-    public ResponseEntity<List<EmployeeDto>> getEmployeesByFirstName(
+    // FIND EMPLOYEES BY FIRST NAME
+    @GetMapping("/firstname")
+    public ResponseEntity<List<EmployeeDto>>
+    getEmployeesByFirstName(
             @RequestParam String firstName) {
 
         return ResponseEntity.ok(
-                employeeService.getEmployeesByFirstName(firstName));
+                employeeService.getEmployeesByFirstName(
+                        firstName
+                )
+        );
     }
-    @GetMapping("/employees/email")
-    public ResponseEntity<EmployeeDto> getEmployeeByEmail(
+
+    // FIND EMPLOYEE BY EMAIL
+    @GetMapping("/email")
+    public ResponseEntity<EmployeeDto>
+    getEmployeeByEmail(
             @RequestParam String email) {
 
         return ResponseEntity.ok(
-                employeeService.getEmployeeByEmail(email));
-
+                employeeService.getEmployeeByEmail(
+                        email
+                )
+        );
     }
-    @GetMapping("/employees/jpql")
-    public ResponseEntity<List<EmployeeDto>> getEmployeesByFirstNameJPQL(
+
+    // JPQL QUERY
+    @GetMapping("/jpql")
+    public ResponseEntity<List<EmployeeDto>>
+    getEmployeesByFirstNameJPQL(
             @RequestParam String firstName) {
 
         return ResponseEntity.ok(
-                employeeService.getEmployeesByFirstNameJPQL(firstName));
+                employeeService
+                        .getEmployeesByFirstNameJPQL(
+                                firstName
+                        )
+        );
     }
-
-
 }
