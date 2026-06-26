@@ -26,9 +26,11 @@ public class EmployeeService {
     // CREATE EMPLOYEE
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
-        log.info("Creating employee: {} {}",
+        log.info(
+                "Creating employee: {} {}",
                 employeeDto.getFirstName(),
-                employeeDto.getLastName());
+                employeeDto.getLastName()
+        );
 
         Employee employee =
                 EmployeeMapper.mapToEmployee(employeeDto);
@@ -36,8 +38,10 @@ public class EmployeeService {
         Employee savedEmployee =
                 employeeRepository.save(employee);
 
-        log.info("Employee created successfully with id: {}",
-                savedEmployee.getId());
+        log.info(
+                "Employee created successfully with id: {}",
+                savedEmployee.getId()
+        );
 
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
@@ -78,15 +82,20 @@ public class EmployeeService {
     // GET EMPLOYEE BY ID
     public EmployeeDto getEmployeeById(Long id) {
 
-        log.info("Fetching employee with id: {}", id);
+        log.info(
+                "Fetching employee with id: {}",
+                id
+        );
 
         Employee employee =
                 employeeRepository.findById(id)
                         .orElseThrow(() -> {
+
                             log.error(
                                     "Employee not found with id: {}",
                                     id
                             );
+
                             return new ResourceNotFoundException(
                                     "Employee not found with id: " + id
                             );
@@ -100,15 +109,20 @@ public class EmployeeService {
             Long id,
             EmployeeDto updatedEmployee) {
 
-        log.info("Updating employee with id: {}", id);
+        log.info(
+                "Updating employee with id: {}",
+                id
+        );
 
         Employee employee =
                 employeeRepository.findById(id)
                         .orElseThrow(() -> {
+
                             log.error(
                                     "Employee not found with id: {}",
                                     id
                             );
+
                             return new ResourceNotFoundException(
                                     "Employee not found with id: " + id
                             );
@@ -134,7 +148,10 @@ public class EmployeeService {
     // DELETE EMPLOYEE
     public String deleteEmployee(Long id) {
 
-        log.info("Deleting employee with id: {}", id);
+        log.info(
+                "Deleting employee with id: {}",
+                id
+        );
 
         employeeRepository.deleteById(id);
 
@@ -197,6 +214,7 @@ public class EmployeeService {
         Employee employee =
                 employeeRepository.findByEmail(email)
                         .orElseThrow(() -> {
+
                             log.error(
                                     "Employee not found with email: {}",
                                     email
