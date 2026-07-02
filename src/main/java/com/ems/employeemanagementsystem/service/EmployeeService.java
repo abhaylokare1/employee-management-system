@@ -148,17 +148,22 @@ public class EmployeeService {
     // DELETE EMPLOYEE
     public String deleteEmployee(Long id) {
 
-        log.info(
-                "Deleting employee with id: {}",
-                id
-        );
+        log.info("Deleting employee with id: {}", id);
 
-        employeeRepository.deleteById(id);
+        Employee employee =
+                employeeRepository.findById(id)
+                        .orElseThrow(() -> {
 
-        log.info(
-                "Employee deleted successfully with id: {}",
-                id
-        );
+                            log.error("Employee not found with id: {}", id);
+
+                            return new ResourceNotFoundException(
+                                    "Employee not found with id: " + id
+                            );
+                        });
+
+        employeeRepository.delete(employee);
+
+        log.info("Employee deleted successfully with id: {}", id);
 
         return "Employee deleted successfully";
     }

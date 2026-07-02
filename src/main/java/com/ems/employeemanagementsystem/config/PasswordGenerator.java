@@ -16,9 +16,9 @@ public class PasswordGenerator implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        System.out.println(
-                "Encrypted Password: "
-                        + passwordEncoder.encode("123")
-        );
+//        System.out.println(
+//                "Encrypted Password: "
+//                        + passwordEncoder.encode("123")
+//        );
     }
 }

@@ -34,6 +34,7 @@ public class SecurityConfig {
             throws Exception {
 
         http
+                .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
 
                 .sessionManagement(session ->
@@ -45,39 +46,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(
-                                "/auth/login",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/employees/**"
-                        ).hasAnyRole("ADMIN", "USER")
-
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/employees/**"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/employees/**"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/employees/**"
-                        ).hasRole("ADMIN")
+                        .requestMatchers("/employees/**")
+                        .permitAll()
 
                         .anyRequest()
-                        .authenticated()
-                )
-
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
+                        .permitAll()
                 );
+
+//                .addFilterBefore(
+//                        jwtAuthenticationFilter,
+//                        UsernamePasswordAuthenticationFilter.class
+//                );
 
         return http.build();
     }
